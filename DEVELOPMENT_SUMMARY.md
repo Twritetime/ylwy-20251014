@@ -223,7 +223,7 @@ mvn spring-boot:run
 ```
 
 ### 测试接口
-```bash
+```
 # 1. 测试Hello
 curl http://localhost:8080/api/test/hello
 
