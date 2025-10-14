@@ -1,0 +1,27 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: judge-server
+
+# Docker 配置
+docker:
+  host: npipe:////./pipe/docker_engine  # Windows Docker Desktop
+  # host: unix:///var/run/docker.sock  # Linux
+  
+# 判题配置
+judge:
+  # 时间限制（毫秒）
+  time-limit: 1000
+  # 内存限制（MB）
+  memory-limit: 256
+  # 代码最大长度（字节）
+  code-max-length: 65536
+  # 并发判题数量
+  concurrent-judge: 5
+
+# 日志配置
+logging:
+  level:
+    com.ylwy.judge: debug

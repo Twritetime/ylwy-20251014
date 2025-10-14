@@ -1,0 +1,7 @@
+# Judge Server .gitignore
+target/
+*.iml
+.idea/
+.DS_Store
+*.log
+logs/
