@@ -16,6 +16,7 @@
             <router-link to="/" class="nav-link">首页</router-link>
             <router-link to="/questions" class="nav-link">题库</router-link>
             <router-link to="/schools" class="nav-link">院校</router-link>
+            <router-link to="/ranking" class="nav-link">排行榜</router-link>
           </nav>
           
           <!-- 用户信息 -->

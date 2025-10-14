@@ -30,6 +30,11 @@ const routes = [
     path: '/schools',
     name: 'SchoolList',
     component: () => import('@/views/SchoolList.vue')
+  },
+  {
+    path: '/ranking',
+    name: 'Ranking',
+    component: () => import('@/views/Ranking.vue')
   }
 ]
 
@@ -43,7 +48,7 @@ router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
   
   // 需要登录的页面
-  const authPages = ['/questions', '/schools']
+  const authPages = ['/questions', '/schools', '/ranking']
   const needAuth = authPages.some(page => to.path.startsWith(page))
   
   if (needAuth && !token) {

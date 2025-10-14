@@ -98,3 +98,24 @@ export function getSubmissionById(id) {
     method: 'get'
   })
 }
+
+// ============================================
+// 排行榜相关接口
+// ============================================
+
+// 获取排行榜列表
+export function getRankList(params) {
+  return request({
+    url: '/rank/list',
+    method: 'get',
+    params
+  })
+}
+
+// 获取我的排名
+export function getMyRank() {
+  return request({
+    url: '/rank/my',
+    method: 'get'
+  })
+}
