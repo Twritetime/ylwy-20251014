@@ -3,12 +3,14 @@ package com.ylwy;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * 研路无忧后端启动类
  */
 @SpringBootApplication
 @MapperScan("com.ylwy.mapper")
+@EnableAsync
 public class YlwyApplication {
     public static void main(String[] args) {
         SpringApplication.run(YlwyApplication.class, args);

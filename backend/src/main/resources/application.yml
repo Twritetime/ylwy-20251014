@@ -48,6 +48,11 @@ jwt:
   secret: ylwy-secret-key-2024-please-change-in-production-environment
   expiration: 86400000  # 24小时（毫秒）
 
+# 判题服务配置
+judge:
+  server:
+    url: http://localhost:8081
+
 # 日志配置
 logging:
   level:

@@ -45,10 +45,10 @@ public class SubmissionController {
                 request.getCode()
             );
             
-            // TODO: 异步发送到判题队列
-            // 这里先返回PENDING状态，后续实现判题服务
+            // 异步调用判题服务
+            submissionService.judgeSubmissionAsync(submission.getId(), request.getQuestionId());
             
-            return Result.success("提交成功", submission);
+            return Result.success("提交成功，正在判题...", submission);
         } catch (Exception e) {
             return Result.error("提交失败：" + e.getMessage());
         }

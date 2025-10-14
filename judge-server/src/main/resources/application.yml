@@ -5,23 +5,21 @@ spring:
   application:
     name: judge-server
 
-# Docker 配置
-docker:
-  host: npipe:////./pipe/docker_engine  # Windows Docker Desktop
-  # host: unix:///var/run/docker.sock  # Linux
-  
 # 判题配置
 judge:
-  # 时间限制（毫秒）
-  time-limit: 1000
-  # 内存限制（MB）
-  memory-limit: 256
-  # 代码最大长度（字节）
-  code-max-length: 65536
-  # 并发判题数量
-  concurrent-judge: 5
+  docker-host: unix:///var/run/docker.sock
+  default-time-limit: 1000
+  default-memory-limit: 262144
+  work-dir: D:/temp/ylwy-judge
+  enable-docker: false
+  cpp-compile-cmd: g++ -std=c++17 -O2 -o Main Main.cpp
+  java-compile-cmd: javac Main.java
+  python-run-cmd: python3 Main.py
 
 # 日志配置
 logging:
   level:
-    com.ylwy.judge: debug
+    com.ylwy.judge: DEBUG
+    root: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
