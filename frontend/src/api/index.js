@@ -59,3 +59,42 @@ export function getSchoolList(params) {
     params
   })
 }
+
+// ============================================
+// 代码提交相关接口
+// ============================================
+
+// 提交代码
+export function submitCode(data) {
+  return request({
+    url: '/submissions/submit',
+    method: 'post',
+    data
+  })
+}
+
+// 获取我的提交记录
+export function getMySubmissions(params) {
+  return request({
+    url: '/submissions/my',
+    method: 'get',
+    params
+  })
+}
+
+// 获取题目的提交记录
+export function getQuestionSubmissions(questionId, params) {
+  return request({
+    url: `/submissions/question/${questionId}`,
+    method: 'get',
+    params
+  })
+}
+
+// 获取提交详情
+export function getSubmissionById(id) {
+  return request({
+    url: `/submissions/${id}`,
+    method: 'get'
+  })
+}

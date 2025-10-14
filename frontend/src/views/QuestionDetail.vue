@@ -191,7 +191,7 @@ import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { ArrowLeft } from '@element-plus/icons-vue'
-import { getQuestionById } from '@/api'
+import { getQuestionById, submitCode, getQuestionSubmissions } from '@/api'
 import * as monaco from 'monaco-editor'
 
 const route = useRoute()
@@ -226,11 +226,32 @@ const fetchQuestionDetail = async () => {
       await nextTick()
       initEditor()
     }
+    
+    // 获取提交记录
+    fetchMySubmissions()
   } catch (error) {
     console.error('获取题目详情失败:', error)
     ElMessage.error('获取题目详情失败')
   } finally {
     loading.value = false
+  }
+}
+
+// 获取我的提交记录
+const fetchMySubmissions = async () => {
+  try {
+    const res = await getQuestionSubmissions(question.value.id, {
+      current: 1,
+      size: 10
+    })
+    if (res.data && res.data.records) {
+      mySubmissions.value = res.data.records.map(item => ({
+        ...item,
+        submitTime: item.createdAt
+      }))
+    }
+  } catch (error) {
+    console.error('获取提交记录失败:', error)
   }
 }
 
@@ -300,15 +321,18 @@ const handleSubmitCode = async () => {
 
   try {
     submitting.value = true
-    // TODO: 调用提交代码API
+    
+    // 调用提交代码API
+    const res = await submitCode({
+      questionId: question.value.id,
+      language: language.value.toUpperCase(),
+      code: code
+    })
+    
     ElMessage.success('代码已提交，正在判题...')
     
-    // 模拟添加提交记录
-    mySubmissions.value.unshift({
-      status: Math.random() > 0.5 ? 'ACCEPTED' : 'WRONG_ANSWER',
-      submitTime: new Date(),
-      language: language.value.toUpperCase()
-    })
+    // 刷新提交记录
+    fetchMySubmissions()
   } catch (error) {
     console.error('提交代码失败:', error)
     ElMessage.error('提交代码失败')

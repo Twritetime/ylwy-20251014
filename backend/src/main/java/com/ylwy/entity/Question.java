@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 题目实体类
@@ -94,4 +95,16 @@ public class Question {
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updatedAt;
+    
+    /**
+     * 选择题选项列表（非数据库字段）
+     */
+    @TableField(exist = false)
+    private List<QuestionOption> options;
+    
+    /**
+     * 测试用例列表（非数据库字段）
+     */
+    @TableField(exist = false)
+    private List<TestCase> testCases;
 }
