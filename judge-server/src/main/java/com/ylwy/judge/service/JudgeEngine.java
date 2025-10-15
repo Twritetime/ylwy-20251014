@@ -259,7 +259,7 @@ public class JudgeEngine {
             case "java":
                 return "java -cp " + workDir + " Main";
             case "python":
-                return "python3 " + workDir + "/Main.py";
+                return "python " + workDir + "/Main.py";
             default:
                 return null;
         }
