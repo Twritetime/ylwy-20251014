@@ -1,127 +1,161 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
     <div class="container mx-auto px-4 py-8">
       <!-- 页面标题 -->
-      <div class="mb-6">
-        <h1 class="text-3xl font-bold text-gray-800">题库</h1>
-        <p class="text-gray-600 mt-2">选择题目开始刷题，提升编程能力</p>
+      <div class="mb-6 animate-fade-in">
+        <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100">题库</h1>
+        <p class="text-gray-600 dark:text-gray-400 mt-2">选择题目开始刷题，提升编程能力</p>
       </div>
 
       <!-- 筛选区 -->
-      <el-card class="mb-6" shadow="never">
-        <el-form :inline="true" :model="filterForm" class="filter-form">
-          <el-form-item label="题目类型">
-            <el-select
-              v-model="filterForm.type"
-              placeholder="全部类型"
-              clearable
-              @change="handleFilter"
-            >
-              <el-option label="选择题" value="CHOICE" />
-              <el-option label="编程题" value="CODE" />
-            </el-select>
-          </el-form-item>
+      <AnimatedCard class="mb-6 card-hover dark:bg-gray-800 dark:border-gray-700" shadow="never">
+        <el-form :inline="true" :model="filterForm" class="filter-form p-4">
+          <div class="flex flex-col md:flex-row md:items-end gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">题目类型</label>
+              <el-select
+                v-model="filterForm.type"
+                placeholder="全部类型"
+                clearable
+                @change="handleFilter"
+                class="w-full md:w-32"
+              >
+                <el-option label="选择题" value="CHOICE" />
+                <el-option label="编程题" value="CODE" />
+              </el-select>
+            </div>
 
-          <el-form-item label="难度">
-            <el-select
-              v-model="filterForm.difficulty"
-              placeholder="全部难度"
-              clearable
-              @change="handleFilter"
-            >
-              <el-option label="简单" value="EASY" />
-              <el-option label="中等" value="MEDIUM" />
-              <el-option label="困难" value="HARD" />
-            </el-select>
-          </el-form-item>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">难度</label>
+              <el-select
+                v-model="filterForm.difficulty"
+                placeholder="全部难度"
+                clearable
+                @change="handleFilter"
+                class="w-full md:w-32"
+              >
+                <el-option label="简单" value="EASY" />
+                <el-option label="中等" value="MEDIUM" />
+                <el-option label="困难" value="HARD" />
+              </el-select>
+            </div>
 
-          <el-form-item label="科目">
-            <el-select
-              v-model="filterForm.subjectId"
-              placeholder="全部科目"
-              clearable
-              @change="handleFilter"
-            >
-              <el-option
-                v-for="subject in subjects"
-                :key="subject.id"
-                :label="subject.name"
-                :value="subject.id"
-              />
-            </el-select>
-          </el-form-item>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">科目</label>
+              <el-select
+                v-model="filterForm.subjectId"
+                placeholder="全部科目"
+                clearable
+                @change="handleFilter"
+                class="w-full md:w-40"
+              >
+                <el-option
+                  v-for="subject in subjects"
+                  :key="subject.id"
+                  :label="subject.name"
+                  :value="subject.id"
+                />
+              </el-select>
+            </div>
+
+            <div class="mt-6 md:mt-0">
+              <GradientButton @click="handleFilter" size="default">
+                <el-icon><Search /></el-icon>
+                <span class="ml-1">搜索</span>
+              </GradientButton>
+            </div>
+          </div>
         </el-form>
-      </el-card>
+      </AnimatedCard>
 
       <!-- 题目列表 -->
       <div v-loading="loading" class="space-y-4">
-        <el-card
-          v-for="question in questionList"
+        <AnimatedCard
+          v-for="(question, index) in questionList"
           :key="question.id"
-          class="question-card hover:shadow-lg transition-shadow cursor-pointer"
-          shadow="hover"
+          class="question-card cursor-pointer dark:bg-gray-800 dark:border-gray-700 stagger-item"
+          :style="{ animationDelay: `${index * 50}ms` }"
           @click="goToDetail(question.id)"
         >
-          <div class="flex items-center justify-between">
-            <div class="flex-1">
-              <div class="flex items-center gap-3 mb-2">
-                <!-- 题目类型标签 -->
-                <el-tag
-                  :type="question.type === 'CODE' ? 'primary' : 'success'"
-                  size="small"
-                >
-                  {{ question.type === 'CODE' ? '编程题' : '选择题' }}
-                </el-tag>
+          <div class="p-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div class="flex-1">
+                <div class="flex items-center flex-wrap gap-3 mb-3">
+                  <!-- 题目编号 -->
+                  <el-tag 
+                    type="info" 
+                    size="small" 
+                    class="beautiful-tag"
+                  >
+                    {{ question.questionNo }}
+                  </el-tag>
+                  
+                  <!-- 题目类型标签 -->
+                  <el-tag
+                    :type="question.type === 'CODE' ? 'primary' : 'success'"
+                    size="small"
+                    class="beautiful-tag"
+                  >
+                    {{ question.type === 'CODE' ? '编程题' : '选择题' }}
+                  </el-tag>
 
-                <!-- 难度标签 -->
-                <el-tag
-                  :type="getDifficultyType(question.difficulty)"
-                  size="small"
-                >
-                  {{ getDifficultyText(question.difficulty) }}
-                </el-tag>
+                  <!-- 难度标签 -->
+                  <el-tag
+                    :type="getDifficultyType(question.difficulty)"
+                    size="small"
+                    class="beautiful-tag"
+                  >
+                    {{ getDifficultyText(question.difficulty) }}
+                  </el-tag>
 
-                <!-- 科目 -->
-                <span class="text-sm text-gray-500">
-                  {{ question.subjectName }}
-                </span>
+                  <!-- 科目 -->
+                  <span class="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                    <el-icon><Collection /></el-icon>
+                    {{ question.subjectName }}
+                  </span>
+                </div>
+
+                <!-- 题目标题 -->
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3">
+                  {{ question.title }}
+                </h3>
+
+                <!-- 统计信息 -->
+                <div class="flex items-center flex-wrap gap-4 text-sm text-gray-500 dark:text-gray-400">
+                  <span class="flex items-center gap-1">
+                    <el-icon><Check /></el-icon>
+                    AC率: {{ calculateAcceptRate(question) }}
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <el-icon><Document /></el-icon>
+                    提交: {{ question.submitCount || 0 }}
+                  </span>
+                  <span class="flex items-center gap-1">
+                    <el-icon><User /></el-icon>
+                    通过: {{ question.acceptedCount || 0 }}
+                  </span>
+                </div>
               </div>
 
-              <!-- 题目标题 -->
-              <h3 class="text-lg font-semibold text-gray-800 mb-2">
-                {{ question.title }}
-              </h3>
-
-              <!-- 统计信息 -->
-              <div class="flex items-center gap-4 text-sm text-gray-500">
-                <span>
-                  <el-icon><Check /></el-icon>
-                  AC率: {{ calculateAcceptRate(question) }}
-                </span>
-                <span>
-                  <el-icon><Document /></el-icon>
-                  提交: {{ question.submitCount || 0 }}
-                </span>
-                <span>
-                  <el-icon><User /></el-icon>
-                  通过: {{ question.acceptedCount || 0 }}
-                </span>
+              <!-- 操作按钮 -->
+              <div class="md:ml-4 mt-4 md:mt-0">
+                <GradientButton 
+                  size="small" 
+                  @click.stop="goToDetail(question.id)"
+                  class="w-full md:w-auto"
+                >
+                  开始答题
+                </GradientButton>
               </div>
-            </div>
-
-            <!-- 操作按钮 -->
-            <div>
-              <el-button type="primary" @click.stop="goToDetail(question.id)">
-                开始答题
-              </el-button>
             </div>
           </div>
-        </el-card>
+        </AnimatedCard>
 
         <!-- 空状态 -->
         <el-empty
           v-if="!loading && questionList.length === 0"
           description="暂无题目"
+          class="dark:text-gray-400"
         />
       </div>
 
@@ -133,6 +167,7 @@
           :total="pagination.total"
           :page-sizes="[10, 20, 50]"
           layout="total, sizes, prev, pager, next, jumper"
+          background
           @current-change="fetchQuestions"
           @size-change="fetchQuestions"
         />
@@ -144,8 +179,10 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Check, Document, User } from '@element-plus/icons-vue'
+import { Check, Document, User, Search, Collection } from '@element-plus/icons-vue'
 import { getQuestionList, getSubjectList } from '@/api'
+import AnimatedCard from '@/components/AnimatedCard.vue'
+import GradientButton from '@/components/GradientButton.vue'
 
 const router = useRouter()
 
@@ -243,7 +280,7 @@ onMounted(() => {
 
 <style scoped>
 .question-card {
-  transition: all 0.3s ease;
+  transition: all 0.15s ease;
 }
 
 .question-card:hover {
@@ -252,5 +289,18 @@ onMounted(() => {
 
 .filter-form :deep(.el-form-item) {
   margin-bottom: 0;
+}
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+  .filter-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .filter-form :deep(.el-form-item) {
+    width: 100%;
+    margin-bottom: 12px;
+  }
 }
 </style>

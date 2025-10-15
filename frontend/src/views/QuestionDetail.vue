@@ -191,7 +191,7 @@ import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { ArrowLeft } from '@element-plus/icons-vue'
-import { getQuestionById, submitCode, getQuestionSubmissions } from '@/api'
+import { getQuestionById, submitCode, getQuestionSubmissions, getSubmissionById } from '@/api'
 import * as monaco from 'monaco-editor'
 
 const route = useRoute()
@@ -331,6 +331,11 @@ const handleSubmitCode = async () => {
     
     ElMessage.success('代码已提交，正在判题...')
     
+    // 获取提交ID并开始轮询判题状态
+    if (res.data && res.data.id) {
+      startPollingSubmissionStatus(res.data.id)
+    }
+    
     // 刷新提交记录
     fetchMySubmissions()
   } catch (error) {
@@ -338,6 +343,90 @@ const handleSubmitCode = async () => {
     ElMessage.error('提交代码失败')
   } finally {
     submitting.value = false
+  }
+}
+
+// 轮询判题状态
+let pollingTimer = null
+const startPollingSubmissionStatus = async (submissionId) => {
+  let pollCount = 0
+  const maxPolls = 30 // 最多轮询30次，30秒
+  
+  const poll = async () => {
+    try {
+      // 调用获取提交详情API
+      const res = await getSubmissionById(submissionId)
+      const submission = res.data
+      
+      if (!submission) return
+      
+      const status = submission.status
+      
+      // 检查是否为终态
+      const terminalStatuses = ['AC', 'WA', 'TLE', 'MLE', 'RE', 'CE', 'SE']
+      const isTerminal = terminalStatuses.includes(status.toUpperCase())
+      
+      if (isTerminal) {
+        // 判题完成，停止轮询
+        if (pollingTimer) {
+          clearTimeout(pollingTimer)
+          pollingTimer = null
+        }
+        
+        // 显示判题结果
+        showJudgeResult(submission)
+        
+        // 刷新提交记录
+        fetchMySubmissions()
+      } else if (pollCount < maxPolls) {
+        // 继续轮询
+        pollCount++
+        pollingTimer = setTimeout(poll, 1000) // 1秒后再次轮询
+      } else {
+        // 超时
+        ElMessage.warning('判题超时，请稍后查看提交记录')
+      }
+    } catch (error) {
+      console.error('查询判题状态失败:', error)
+    }
+  }
+  
+  // 开始第一次轮询
+  poll()
+}
+
+// 显示判题结果
+const showJudgeResult = (submission) => {
+  const status = submission.status.toUpperCase()
+  const statusMap = {
+    'AC': { type: 'success', text: '答案正确' },
+    'WA': { type: 'error', text: '答案错误' },
+    'TLE': { type: 'warning', text: '超时' },
+    'MLE': { type: 'warning', text: '内存超限' },
+    'RE': { type: 'error', text: '运行错误' },
+    'CE': { type: 'error', text: '编译错误' },
+    'SE': { type: 'error', text: '系统错误' }
+  }
+  
+  const result = statusMap[status] || { type: 'info', text: '未知' }
+  
+  let message = `${result.text}`
+  if (submission.timeUsed) {
+    message += ` | 运行时间: ${submission.timeUsed}ms`
+  }
+  if (submission.passCount !== undefined && submission.totalCount !== undefined) {
+    message += ` | 通过用例: ${submission.passCount}/${submission.totalCount}`
+  }
+  if (submission.errorMessage) {
+    message += ` | ${submission.errorMessage}`
+  }
+  
+  if (result.type === 'success') {
+    ElMessage.success(message)
+  } else if (result.type === 'error') {
+    ElMessage.error(message)
+  } else {
+    ElMessage.warning(message)
   }
 }
 
@@ -372,15 +461,25 @@ const calculateAcceptRate = (question) => {
 
 // 获取状态文本
 const getStatusText = (status) => {
+  const statusUpper = status ? status.toUpperCase() : ''
   const map = {
-    ACCEPTED: '通过',
-    WRONG_ANSWER: '答案错误',
-    TIME_LIMIT_EXCEEDED: '超时',
-    MEMORY_LIMIT_EXCEEDED: '内存超限',
-    RUNTIME_ERROR: '运行错误',
-    COMPILE_ERROR: '编译错误'
+    'PENDING': '等待判题',
+    'JUDGING': '判题中',
+    'AC': '通过',
+    'ACCEPTED': '通过',
+    'WA': '答案错误',
+    'WRONG_ANSWER': '答案错误',
+    'TLE': '超时',
+    'TIME_LIMIT_EXCEEDED': '超时',
+    'MLE': '内存超限',
+    'MEMORY_LIMIT_EXCEEDED': '内存超限',
+    'RE': '运行错误',
+    'RUNTIME_ERROR': '运行错误',
+    'CE': '编译错误',
+    'COMPILE_ERROR': '编译错误',
+    'SE': '系统错误'
   }
-  return map[status] || '未知'
+  return map[statusUpper] || '未知'
 }
 
 // 格式化时间
@@ -404,6 +503,12 @@ onUnmounted(() => {
   // 销毁编辑器
   if (editor) {
     editor.dispose()
+  }
+  
+  // 清理轮询定时器
+  if (pollingTimer) {
+    clearTimeout(pollingTimer)
+    pollingTimer = null
   }
 })
 </script>

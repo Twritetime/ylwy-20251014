@@ -1,59 +1,71 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full">
-      <div class="text-center">
-        <h2 class="text-3xl font-bold text-gray-900">研路无忧</h2>
-        <p class="mt-2 text-sm text-gray-600">登录您的账号</p>
+  <div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <!-- 背景装饰 -->
+    <div class="background-decoration">
+      <div class="decoration-circle decoration-circle-1"></div>
+      <div class="decoration-circle decoration-circle-2"></div>
+    </div>
+    
+    <div class="max-w-md w-full relative z-10">
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white">研路无忧</h2>
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">登录您的账号</p>
       </div>
       
-      <el-card class="mt-8" shadow="always">
-        <el-form
-          ref="loginFormRef"
-          :model="loginForm"
-          :rules="rules"
-          label-width="0"
-        >
-          <el-form-item prop="username">
-            <el-input
-              v-model="loginForm.username"
-              placeholder="用户名"
-              size="large"
-              prefix-icon="User"
-            />
-          </el-form-item>
-          
-          <el-form-item prop="password">
-            <el-input
-              v-model="loginForm.password"
-              type="password"
-              placeholder="密码"
-              size="large"
-              prefix-icon="Lock"
-              show-password
-              @keyup.enter="handleLogin"
-            />
-          </el-form-item>
-          
-          <el-form-item>
-            <el-button
-              type="primary"
-              size="large"
-              :loading="loading"
-              @click="handleLogin"
-              class="w-full"
-            >
-              登录
-            </el-button>
-          </el-form-item>
-          
-          <div class="text-center text-sm">
-            <span class="text-gray-600">还没有账号？</span>
-            <router-link to="/register" class="text-primary hover:underline ml-1">
-              立即注册
-            </router-link>
-          </div>
-        </el-form>
-      </el-card>
+      <AnimatedCard class="shadow-lg">
+        <div class="p-8">
+          <el-form
+            ref="loginFormRef"
+            :model="loginForm"
+            :rules="rules"
+            label-width="0"
+          >
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">用户名</label>
+              <el-input
+                v-model="loginForm.username"
+                placeholder="请输入用户名"
+                size="large"
+                class="beautiful-input"
+                prefix-icon="User"
+              />
+            </div>
+            
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">密码</label>
+              <el-input
+                v-model="loginForm.password"
+                type="password"
+                placeholder="请输入密码"
+                size="large"
+                class="beautiful-input"
+                prefix-icon="Lock"
+                show-password
+                @keyup.enter="handleLogin"
+              />
+            </div>
+            
+            <div class="mb-6">
+              <GradientButton
+                type="primary"
+                size="large"
+                :loading="loading"
+                @click="handleLogin"
+                class="w-full"
+              >
+                登录
+              </GradientButton>
+            </div>
+            
+            <div class="text-center text-sm">
+              <span class="text-gray-600 dark:text-gray-400">还没有账号？</span>
+              <router-link to="/register" class="text-primary hover:underline ml-1 dark:text-blue-400">
+                立即注册
+              </router-link>
+            </div>
+          </el-form>
+        </div>
+      </AnimatedCard>
     </div>
   </div>
 </template>
@@ -62,6 +74,8 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import AnimatedCard from '@/components/AnimatedCard.vue'
+import GradientButton from '@/components/GradientButton.vue'
 import { useUserStore } from '@/stores/user'
 import { login } from '@/api'
 
@@ -106,9 +120,10 @@ const handleLogin = async () => {
     ElMessage.success('登录成功')
     
     // 跳转到首页
-    router.push('/')
+    router.push('/profile')
   } catch (error) {
     console.error('登录失败:', error)
+    ElMessage.error('登录失败，请检查用户名和密码')
   } finally {
     loading.value = false
   }

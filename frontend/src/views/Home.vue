@@ -1,58 +1,91 @@
 <template>
   <Layout>
-    <div class="home">
+    <div class="home relative">
+      <!-- 背景装饰 -->
+      <div class="background-decoration">
+        <div class="decoration-circle decoration-circle-1"></div>
+        <div class="decoration-circle decoration-circle-2"></div>
+      </div>
+      
       <!-- Hero区域 -->
-      <div class="hero bg-gradient-to-r from-blue-500 to-purple-600 text-white py-20">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-          <h1 class="text-5xl font-bold mb-4">研路无忧</h1>
-          <p class="text-xl mb-8">计算机考研 · 刷题神器</p>
-          <div class="space-x-4">
+      <div class="hero bg-gradient-to-r from-blue-500 to-blue-600 text-white py-16 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+          <h1 class="text-display mb-4 animate-fade-in">研路无忧</h1>
+          <p class="text-h4 mb-8 opacity-90">计算机考研 · 刷题神器</p>
+          <div class="flex flex-col sm:flex-row justify-center gap-4">
             <router-link to="/questions">
-              <el-button type="primary" size="large">开始刷题</el-button>
+              <GradientButton size="large">开始刷题</GradientButton>
             </router-link>
             <router-link to="/schools">
-              <el-button type="default" size="large" plain>院校查询</el-button>
+              <el-button size="large" plain class="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20 transition-all duration-300">
+                院校查询
+              </el-button>
             </router-link>
           </div>
         </div>
+        
+        <!-- 装饰性元素 -->
+        <div class="absolute top-10 left-10 w-24 h-24 rounded-full bg-white/10 backdrop-blur-sm"></div>
+        <div class="absolute bottom-10 right-10 w-16 h-16 rounded-full bg-white/10 backdrop-blur-sm"></div>
       </div>
       
       <!-- 热门院校 -->
-      <div class="max-w-7xl mx-auto px-4 py-12">
-        <h2 class="text-2xl font-bold mb-6">热门院校</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div v-for="school in hotSchools" :key="school.name" 
-               class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow cursor-pointer">
-            <h3 class="text-xl font-semibold mb-2">{{ school.name }}</h3>
-            <p class="text-gray-600">热门指数: {{ school.hotIndex }}↑</p>
-          </div>
+      <div class="max-w-7xl mx-auto px-4 py-8">
+        <h2 class="section-title">热门院校</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <AnimatedCard 
+            v-for="school in hotSchools" 
+            :key="school.name" 
+            clickable
+            @click="goToSchool(school.name)"
+            class="p-5 transition-all duration-300"
+          >
+            <h3 class="text-h3 mb-2">{{ school.name }}</h3>
+            <div class="flex items-center justify-between">
+              <p class="text-gray-600 dark:text-gray-400">热门指数</p>
+              <el-tag type="primary" effect="dark">{{ school.hotIndex }}↑</el-tag>
+            </div>
+          </AnimatedCard>
         </div>
       </div>
       
       <!-- 科目导航 -->
-      <div class="max-w-7xl mx-auto px-4 py-12">
-        <h2 class="text-2xl font-bold mb-6">科目分类</h2>
+      <div class="max-w-7xl mx-auto px-4 py-8 bg-gray-50 dark:bg-gray-800/50 rounded-2xl my-6 transition-colors duration-300">
+        <h2 class="section-title">科目分类</h2>
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-          <div v-for="subject in subjects" :key="subject.id"
-               @click="goToQuestions(subject.id)"
-               class="bg-white p-6 rounded-lg shadow text-center cursor-pointer hover:shadow-lg transition-shadow">
-            <h3 class="text-lg font-semibold">{{ subject.name }}</h3>
-          </div>
+          <AnimatedCard 
+            v-for="subject in subjects" 
+            :key="subject.id"
+            clickable
+            @click="goToQuestions(subject.id)"
+            class="p-5 text-center transition-all duration-300"
+          >
+            <div class="beautiful-icon mx-auto mb-3">
+              <el-icon><Collection /></el-icon>
+            </div>
+            <h3 class="text-h4">{{ subject.name }}</h3>
+          </AnimatedCard>
         </div>
       </div>
       
       <!-- 实时动态 -->
-      <div class="max-w-7xl mx-auto px-4 py-12">
-        <h2 class="text-2xl font-bold mb-6">实时动态</h2>
-        <div class="bg-white rounded-lg shadow p-6">
+      <div class="max-w-7xl mx-auto px-4 py-8">
+        <h2 class="section-title">实时动态</h2>
+        <AnimatedCard class="p-5 transition-all duration-300">
           <el-empty v-if="!activities.length" description="暂无动态" />
           <div v-else class="space-y-4">
             <div v-for="(activity, index) in activities" :key="index" 
-                 class="border-b pb-4 last:border-0">
-              <p class="text-gray-700">{{ activity }}</p>
+                 class="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-0 animate-slide-up stagger-item"
+                 :style="{ animationDelay: `${index * 100}ms` }">
+              <div class="flex items-start gap-3">
+                <div class="beautiful-icon flex-shrink-0 mt-1">
+                  <el-icon><Bell /></el-icon>
+                </div>
+                <p class="text-gray-700 dark:text-gray-300">{{ activity }}</p>
+              </div>
             </div>
           </div>
-        </div>
+        </AnimatedCard>
       </div>
     </div>
   </Layout>
@@ -61,7 +94,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { Collection, Bell } from '@element-plus/icons-vue'
 import Layout from '@/components/Layout.vue'
+import AnimatedCard from '@/components/AnimatedCard.vue'
+import GradientButton from '@/components/GradientButton.vue'
 import { getSubjectList } from '@/api'
 
 const router = useRouter()
@@ -77,7 +113,9 @@ const subjects = ref([])
 const activities = ref([
   '用户小明刚刚完成了数据结构组卷，得分85分',
   '用户小红通过了C语言题目1000',
-  '欢迎新用户加入研路无忧'
+  '欢迎新用户加入研路无忧',
+  '用户小李在算法题上连续AC5题，获得学霸称号',
+  '系统更新：新增100道操作系统练习题'
 ])
 
 onMounted(async () => {
@@ -95,10 +133,39 @@ const goToQuestions = (subjectId) => {
     query: { subjectId }
   })
 }
+
+const goToSchool = (schoolName) => {
+  console.log(`查看院校: ${schoolName}`)
+}
 </script>
 
 <style scoped>
 .hero {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  transition: all var(--transition-normal) ease;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+  
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+  
+  .hero p {
+    font-size: 1.2rem;
+  }
+  
+  .gradient-button {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .gradient-button:last-child {
+    margin-bottom: 0;
+  }
 }
 </style>

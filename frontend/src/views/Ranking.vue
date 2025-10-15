@@ -1,14 +1,14 @@
 <template>
   <div class="ranking-container">
     <!-- 页面标题 -->
-    <div class="page-header">
-      <h1 class="text-3xl font-bold text-gray-800">排行榜</h1>
-      <p class="text-gray-500 mt-2">查看用户刷题排名</p>
+    <div class="page-header animate-fade-in">
+      <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100">排行榜</h1>
+      <p class="text-gray-500 dark:text-gray-400 mt-2">查看用户刷题排名</p>
     </div>
 
     <!-- 我的排名卡片 -->
-    <el-card class="my-rank-card" v-if="myRank" shadow="hover">
-      <div class="flex items-center justify-between">
+    <el-card class="my-rank-card card-hover" v-if="myRank" shadow="hover">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <div class="flex items-center gap-4">
           <div class="rank-badge">
             <span class="text-2xl font-bold">{{ myRank.rank }}</span>
@@ -16,32 +16,32 @@
           <el-avatar :size="50" :src="myRank.avatar || '/default-avatar.png'" />
           <div>
             <div class="text-lg font-semibold">{{ myRank.nickname || myRank.username }}</div>
-            <div class="text-sm text-gray-500">@{{ myRank.username }}</div>
+            <div class="text-sm opacity-80">@{{ myRank.username }}</div>
           </div>
         </div>
-        <div class="flex gap-8">
+        <div class="flex gap-4 md:gap-8 justify-around md:justify-start">
           <div class="text-center">
-            <div class="text-2xl font-bold text-green-600">{{ myRank.acCount }}</div>
-            <div class="text-sm text-gray-500">AC题数</div>
+            <div class="text-2xl font-bold text-green-400">{{ myRank.acCount }}</div>
+            <div class="text-sm opacity-80">AC题数</div>
           </div>
           <div class="text-center">
-            <div class="text-2xl font-bold text-blue-600">{{ myRank.submitCount }}</div>
-            <div class="text-sm text-gray-500">提交数</div>
+            <div class="text-2xl font-bold text-blue-400">{{ myRank.submitCount }}</div>
+            <div class="text-sm opacity-80">提交数</div>
           </div>
           <div class="text-center">
-            <div class="text-2xl font-bold text-purple-600">{{ myRank.acRate || 0 }}%</div>
-            <div class="text-sm text-gray-500">AC率</div>
+            <div class="text-2xl font-bold text-purple-400">{{ myRank.acRate || 0 }}%</div>
+            <div class="text-sm opacity-80">AC率</div>
           </div>
         </div>
       </div>
     </el-card>
 
     <!-- 排行榜列表 -->
-    <el-card class="rank-list-card" shadow="never">
+    <el-card class="rank-list-card dark:bg-gray-800 dark:border-gray-700" shadow="never">
       <template #header>
         <div class="flex items-center justify-between">
-          <span class="font-semibold">Top 100 排行榜</span>
-          <el-button @click="loadRankList" :loading="loading" size="small" type="primary" plain>
+          <span class="font-semibold text-gray-800 dark:text-gray-100">Top 100 排行榜</span>
+          <el-button @click="loadRankList" :loading="loading" size="small" type="primary" plain class="btn-transition">
             <el-icon><Refresh /></el-icon>
             刷新
           </el-button>
@@ -52,6 +52,7 @@
         :data="rankList" 
         v-loading="loading"
         stripe
+        class="dark-table"
         :header-cell-style="{ background: '#f5f7fa' }">
         
         <el-table-column label="排名" width="80" align="center">
@@ -70,8 +71,8 @@
             <div class="flex items-center gap-3">
               <el-avatar :size="40" :src="row.avatar || '/default-avatar.png'" />
               <div>
-                <div class="font-semibold">{{ row.nickname || row.username }}</div>
-                <div class="text-xs text-gray-500">@{{ row.username }}</div>
+                <div class="font-semibold text-gray-800 dark:text-gray-100">{{ row.nickname || row.username }}</div>
+                <div class="text-xs text-gray-500 dark:text-gray-400">@{{ row.username }}</div>
               </div>
             </div>
           </template>
@@ -89,7 +90,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="AC率" width="120" align="center">
+        <el-table-column label="AC率" width="150" align="center">
           <template #default="{ row }">
             <div class="text-sm">
               <el-progress 
@@ -174,6 +175,8 @@ onMounted(() => {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  min-height: 100vh;
+  background-color: var(--bg-secondary);
 }
 
 .page-header {
@@ -182,8 +185,13 @@ onMounted(() => {
 
 .my-rank-card {
   margin-bottom: 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: white;
+  transition: all 0.15s ease;
+}
+
+.dark .my-rank-card {
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
 }
 
 .my-rank-card :deep(.el-card__body) {
@@ -203,6 +211,7 @@ onMounted(() => {
 
 .rank-list-card {
   margin-top: 20px;
+  transition: all 0.15s ease;
 }
 
 .rank-number {
@@ -223,5 +232,21 @@ onMounted(() => {
 
 .rank-bronze {
   color: #cd7f32;
+}
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+  .ranking-container {
+    padding: 12px;
+  }
+  
+  .my-rank-card :deep(.el-card__body) {
+    padding: 16px;
+  }
+  
+  .rank-badge {
+    width: 50px;
+    height: 50px;
+  }
 }
 </style>

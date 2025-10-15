@@ -1,102 +1,120 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-50">
-    <div class="w-full max-w-md px-4">
+  <div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 relative overflow-hidden">
+    <!-- 背景装饰 -->
+    <div class="background-decoration">
+      <div class="decoration-circle decoration-circle-1"></div>
+      <div class="decoration-circle decoration-circle-2"></div>
+    </div>
+    
+    <div class="w-full max-w-md px-4 relative z-10">
       <!-- Logo 和标题 -->
       <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-blue-600 mb-2">研路无忧</h1>
-        <p class="text-gray-600">注册账号，开启刷题之旅</p>
+        <h1 class="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">研路无忧</h1>
+        <p class="text-gray-600 dark:text-gray-400">注册账号，开启刷题之旅</p>
       </div>
 
       <!-- 注册表单 -->
-      <el-card class="shadow-lg" :body-style="{ padding: '40px' }">
-        <el-form
-          ref="registerFormRef"
-          :model="registerForm"
-          :rules="rules"
-          label-width="80px"
-          size="large"
-        >
-          <el-form-item label="用户名" prop="username">
-            <el-input
-              v-model="registerForm.username"
-              placeholder="请输入用户名（4-20位字母数字）"
-              clearable
-            >
-              <template #prefix>
-                <el-icon><User /></el-icon>
-              </template>
-            </el-input>
-          </el-form-item>
+      <AnimatedCard class="shadow-lg">
+        <div class="p-8">
+          <el-form
+            ref="registerFormRef"
+            :model="registerForm"
+            :rules="rules"
+            label-width="80px"
+            size="large"
+          >
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">用户名</label>
+              <el-input
+                v-model="registerForm.username"
+                placeholder="请输入用户名（4-20位字母数字）"
+                class="beautiful-input"
+                clearable
+              >
+                <template #prefix>
+                  <el-icon><User /></el-icon>
+                </template>
+              </el-input>
+            </div>
 
-          <el-form-item label="昵称" prop="nickname">
-            <el-input
-              v-model="registerForm.nickname"
-              placeholder="请输入昵称"
-              clearable
-            >
-              <template #prefix>
-                <el-icon><Avatar /></el-icon>
-              </template>
-            </el-input>
-          </el-form-item>
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">昵称</label>
+              <el-input
+                v-model="registerForm.nickname"
+                placeholder="请输入昵称"
+                class="beautiful-input"
+                clearable
+              >
+                <template #prefix>
+                  <el-icon><Avatar /></el-icon>
+                </template>
+              </el-input>
+            </div>
 
-          <el-form-item label="邮箱" prop="email">
-            <el-input
-              v-model="registerForm.email"
-              placeholder="请输入邮箱地址"
-              clearable
-            >
-              <template #prefix>
-                <el-icon><Message /></el-icon>
-              </template>
-            </el-input>
-          </el-form-item>
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">邮箱</label>
+              <el-input
+                v-model="registerForm.email"
+                placeholder="请输入邮箱地址"
+                class="beautiful-input"
+                clearable
+              >
+                <template #prefix>
+                  <el-icon><Message /></el-icon>
+                </template>
+              </el-input>
+            </div>
 
-          <el-form-item label="密码" prop="password">
-            <el-input
-              v-model="registerForm.password"
-              type="password"
-              placeholder="请输入密码（至少6位）"
-              show-password
-            >
-              <template #prefix>
-                <el-icon><Lock /></el-icon>
-              </template>
-            </el-input>
-          </el-form-item>
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">密码</label>
+              <el-input
+                v-model="registerForm.password"
+                type="password"
+                placeholder="请输入密码（至少6位）"
+                class="beautiful-input"
+                show-password
+              >
+                <template #prefix>
+                  <el-icon><Lock /></el-icon>
+                </template>
+              </el-input>
+            </div>
 
-          <el-form-item label="确认密码" prop="confirmPassword">
-            <el-input
-              v-model="registerForm.confirmPassword"
-              type="password"
-              placeholder="请再次输入密码"
-              show-password
-            >
-              <template #prefix>
-                <el-icon><Lock /></el-icon>
-              </template>
-            </el-input>
-          </el-form-item>
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">确认密码</label>
+              <el-input
+                v-model="registerForm.confirmPassword"
+                type="password"
+                placeholder="请再次输入密码"
+                class="beautiful-input"
+                show-password
+              >
+                <template #prefix>
+                  <el-icon><Lock /></el-icon>
+                </template>
+              </el-input>
+            </div>
 
-          <el-form-item>
-            <el-button
-              type="primary"
-              class="w-full"
-              :loading="loading"
-              @click="handleRegister"
-            >
-              注册
-            </el-button>
-          </el-form-item>
+            <div class="mb-6">
+              <GradientButton
+                type="primary"
+                class="w-full"
+                :loading="loading"
+                @click="handleRegister"
+              >
+                注册
+              </GradientButton>
+            </div>
 
-          <div class="text-center text-sm">
-            <span class="text-gray-600">已有账号？</span>
-            <el-link type="primary" @click="router.push('/login')">
-              立即登录
-            </el-link>
-          </div>
-        </el-form>
-      </el-card>
+            <div class="text-center text-sm">
+              <span class="text-gray-600 dark:text-gray-400">已有账号？</span>
+              <el-link type="primary" @click="router.push('/login')">
+                立即登录
+              </el-link>
+            </div>
+          </el-form>
+        </div>
+      </AnimatedCard>
     </div>
   </div>
 </template>

@@ -119,3 +119,41 @@ export function getMyRank() {
     method: 'get'
   })
 }
+
+// ============================================
+// 个人中心相关接口
+// ============================================
+
+// 获取个人信息
+export function getUserProfile() {
+  return request({
+    url: '/users/profile',
+    method: 'get'
+  })
+}
+
+// 更新个人信息
+export function updateProfile(data) {
+  return request({
+    url: '/users/profile',
+    method: 'put',
+    data
+  })
+}
+
+// 修改密码
+export function updatePassword(data) {
+  return request({
+    url: '/users/password',
+    method: 'put',
+    data
+  })
+}
+
+// 获取用户统计数据
+export function getUserStatistics() {
+  return request({
+    url: '/users/statistics',
+    method: 'get'
+  })
+}
