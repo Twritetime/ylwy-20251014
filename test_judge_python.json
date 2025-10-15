@@ -1,0 +1,16 @@
+{
+  "code": "a, b = map(int, input().split())\nprint(a + b)",
+  "language": "python",
+  "timeLimit": 1000,
+  "memoryLimit": 256,
+  "testCases": [
+    {
+      "input": "1 2",
+      "expectedOutput": "3"
+    },
+    {
+      "input": "5 10",
+      "expectedOutput": "15"
+    }
+  ]
+}

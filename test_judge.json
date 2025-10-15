@@ -1,0 +1,16 @@
+{
+  "code": "#include <iostream>\nusing namespace std;\n\nint main() {\n    int a, b;\n    cin >> a >> b;\n    cout << a + b << endl;\n    return 0;\n}",
+  "language": "cpp",
+  "timeLimit": 1000,
+  "memoryLimit": 256,
+  "testCases": [
+    {
+      "input": "1 2",
+      "expectedOutput": "3"
+    },
+    {
+      "input": "5 10",
+      "expectedOutput": "15"
+    }
+  ]
+}
