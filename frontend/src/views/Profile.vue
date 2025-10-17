@@ -548,6 +548,6 @@ watch(() => themeStore.isDark, () => {
 }
 
 .el-avatar {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
 }
 </style>

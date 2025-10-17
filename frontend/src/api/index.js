@@ -157,3 +157,25 @@ export function getUserStatistics() {
     method: 'get'
   })
 }
+
+// ============================================
+// 系统健康检查相关接口
+// ============================================
+
+// 后端可用性检查（简单Hello）
+export function pingBackend() {
+  return request({
+    url: '/test/hello',
+    method: 'get',
+    silent: true
+  })
+}
+
+// 数据库连接检查
+export function checkDatabase() {
+  return request({
+    url: '/test/db',
+    method: 'get',
+    silent: true
+  })
+}

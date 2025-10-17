@@ -58,6 +58,16 @@
               <el-icon v-if="themeStore.isDark"><Moon /></el-icon>
               <el-icon v-else><Sunny /></el-icon>
             </el-button>
+
+            <!-- 系统状态指示器 -->
+            <div class="flex items-center gap-2 pl-2">
+              <el-tooltip content="后端/API" placement="bottom">
+                <span :class="['inline-block w-2.5 h-2.5 rounded-full', apiOk ? 'bg-green-500' : 'bg-red-500', 'shadow-sm']"></span>
+              </el-tooltip>
+              <el-tooltip content="数据库" placement="bottom">
+                <span :class="['inline-block w-2.5 h-2.5 rounded-full', dbOk ? 'bg-green-500' : 'bg-red-500', 'shadow-sm']"></span>
+              </el-tooltip>
+            </div>
             
             <template v-if="userStore.isLoggedIn">
               <el-dropdown @command="handleCommand">
@@ -165,22 +175,47 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useThemeStore } from '@/stores/theme'
 import { Menu, Moon, Sunny, HomeFilled, Document, School, Trophy, User, SwitchButton, Collection } from '@element-plus/icons-vue'
+import { pingBackend, checkDatabase } from '@/api'
 
 const router = useRouter()
 const userStore = useUserStore()
 const themeStore = useThemeStore()
 const mobileMenuOpen = ref(false)
 
+// 系统状态
+const apiOk = ref(false)
+const dbOk = ref(false)
+let statusTimer = null
+
+const checkStatus = async () => {
+  try {
+    const [apiRes, dbRes] = await Promise.allSettled([
+      pingBackend(),
+      checkDatabase()
+    ])
+
+    apiOk.value = apiRes.status === 'fulfilled'
+    dbOk.value = dbRes.status === 'fulfilled'
+  } catch (e) {
+    // 忽略并保持当前状态
+    console.warn('状态检查失败', e)
+  }
+}
+
 onMounted(() => {
   // 如果已登录,获取用户信息
   if (userStore.isLoggedIn && !userStore.userInfo) {
     userStore.fetchUserInfo()
   }
+
+  // 初始化系统状态并轮询
+  checkStatus()
+  statusTimer = setInterval(checkStatus, 15000)
 })
 
 const handleCommand = (command) => {
@@ -197,14 +232,42 @@ const handleLogout = () => {
   userStore.logout()
   router.push('/login')
 }
+
+onUnmounted(() => {
+  if (statusTimer) {
+    clearInterval(statusTimer)
+    statusTimer = null
+  }
+})
 </script>
 
 <style scoped>
 .nav-link {
-  @apply text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-blue-400 transition-colors flex items-center gap-1 py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700;
+  @apply text-gray-700 dark:text-gray-200 transition-colors flex items-center gap-1 py-2 px-2;
+  position: relative;
 }
 .nav-link.router-link-active {
-  @apply text-primary dark:text-blue-400 font-medium bg-blue-50 dark:bg-blue-900/30;
+  @apply font-semibold;
+  color: #0a84ff;
+}
+
+/* 下划线强调（Apple 风） */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 2px;
+  width: 0;
+  background: #0a84ff;
+  border-radius: 1px;
+  transition: width 0.2s ease;
+}
+.nav-link:hover::after {
+  width: 100%;
+}
+.nav-link.router-link-active::after {
+  width: 100%;
 }
 
 .mobile-nav-link {

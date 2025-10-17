@@ -1,15 +1,11 @@
 <template>
   <Layout>
     <div class="home relative">
-      <!-- 背景装饰 -->
-      <div class="background-decoration">
-        <div class="decoration-circle decoration-circle-1"></div>
-        <div class="decoration-circle decoration-circle-2"></div>
-      </div>
+      <!-- 背景装饰移除：极简纯净 -->
       
-      <!-- Hero区域 -->
-      <div class="hero bg-gradient-to-r from-blue-500 to-blue-600 text-white py-16 relative overflow-hidden">
-        <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+      <!-- Hero区域（Apple 风：纯白、留白、克制） -->
+      <div class="hero bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 py-20 relative">
+        <div class="max-w-7xl mx-auto px-4 text-center">
           <h1 class="text-display mb-4 animate-fade-in">研路无忧</h1>
           <p class="text-h4 mb-8 opacity-90">计算机考研 · 刷题神器</p>
           <div class="flex flex-col sm:flex-row justify-center gap-4">
@@ -17,16 +13,12 @@
               <GradientButton size="large">开始刷题</GradientButton>
             </router-link>
             <router-link to="/schools">
-              <el-button size="large" plain class="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20 transition-all duration-300">
+              <el-button size="large" plain class="border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200">
                 院校查询
               </el-button>
             </router-link>
           </div>
         </div>
-        
-        <!-- 装饰性元素 -->
-        <div class="absolute top-10 left-10 w-24 h-24 rounded-full bg-white/10 backdrop-blur-sm"></div>
-        <div class="absolute bottom-10 right-10 w-16 h-16 rounded-full bg-white/10 backdrop-blur-sm"></div>
       </div>
       
       <!-- 热门院校 -->
@@ -141,7 +133,6 @@ const goToSchool = (schoolName) => {
 
 <style scoped>
 .hero {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   transition: all var(--transition-normal) ease;
 }
 

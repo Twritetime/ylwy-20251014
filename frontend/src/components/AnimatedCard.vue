@@ -36,13 +36,12 @@ const handleClick = () => {
 
 <style scoped>
 .animated-card {
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   box-shadow: var(--card-shadow);
-  transition: all var(--transition-normal) ease;
+  transition: box-shadow var(--transition-fast) ease, transform var(--transition-fast) ease;
   overflow: hidden;
-  position: relative;
 }
 
 .dark .animated-card {
@@ -51,27 +50,13 @@ const handleClick = () => {
 }
 
 .animated-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   box-shadow: var(--card-shadow-hover);
 }
 
-.animated-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--primary-gradient);
-  transform: scaleX(0);
-  transition: transform var(--transition-normal) ease;
-}
-
-.animated-card:hover::before {
-  transform: scaleX(1);
-}
+/* 移除顶部渐变装饰，保持更纯净的卡片风格 */
 
 .animated-card:active {
-  transform: translateY(-1px);
+  transform: translateY(0);
 }
 </style>

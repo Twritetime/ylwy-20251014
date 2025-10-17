@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 用户服务类
@@ -148,10 +149,12 @@ public class UserService {
         wrapper.clear();
         wrapper.eq("user_id", userId);
         wrapper.eq("status", "AC");
-        wrapper.select("SUM(score) as totalScore");
+        wrapper.select("score");
         List<Submission> submissions = submissionMapper.selectList(wrapper);
         int totalScore = submissions.stream()
-                .mapToInt(s -> s.getScore() != null ? s.getScore() : 0)
+                .map(Submission::getScore)
+                .filter(Objects::nonNull)
+                .mapToInt(Integer::intValue)
                 .sum();
         profile.setTotalScore(totalScore);
         

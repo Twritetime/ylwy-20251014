@@ -44,45 +44,30 @@ const handleClick = () => {
 <style scoped>
 .gradient-button {
   background: var(--primary-gradient);
-  border: none;
-  color: white;
-  font-weight: 500;
-  transition: all var(--transition-normal) ease;
-  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
-  border-radius: 8px;
-  padding: 0.75rem 1.5rem;
+  border: 1px solid rgba(10, 132, 255, 0.3);
+  color: #fff;
+  font-weight: 600;
+  transition: background-color var(--transition-fast) ease, box-shadow var(--transition-fast) ease, transform var(--transition-fast) ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.10);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1.25rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  position: relative;
-  overflow: hidden;
 }
 
-.gradient-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: 0.5s;
-}
 
-.gradient-button:hover:not(.is-disabled)::before {
-  left: 100%;
-}
 
 .gradient-button:hover:not(.is-disabled) {
-  background: var(--secondary-gradient);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+  background: linear-gradient(0deg, #1188ff, #1188ff);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
 }
 
 .gradient-button:active:not(.is-disabled) {
   transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.10);
 }
 
 .gradient-button.is-disabled {
@@ -90,9 +75,14 @@ const handleClick = () => {
   cursor: not-allowed;
 }
 
+.gradient-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.15), 0 3px 6px rgba(0, 0, 0, 0.12);
+}
+
 /* 按钮尺寸 */
 .gradient-button.small {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.9rem;
   font-size: 0.875rem;
 }
 
@@ -102,7 +92,7 @@ const handleClick = () => {
 }
 
 .gradient-button.large {
-  padding: 1rem 2rem;
+  padding: 0.9rem 1.75rem;
   font-size: 1.125rem;
 }
 
@@ -110,11 +100,11 @@ const handleClick = () => {
 .gradient-button.text {
   background: transparent;
   box-shadow: none;
-  color: #3b82f6;
+  color: #0a84ff;
 }
 
 .gradient-button.text:hover {
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(10, 132, 255, 0.12);
   transform: none;
   box-shadow: none;
 }

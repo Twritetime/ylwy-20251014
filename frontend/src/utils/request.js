@@ -27,15 +27,20 @@ request.interceptors.request.use(
 request.interceptors.response.use(
   response => {
     const res = response.data
+    const silent = response?.config?.silent === true
     
     // 如果返回的状态码不是200，则认为是错误
     if (res.code !== 200) {
-      ElMessage.error(res.message || '请求失败')
+      if (!silent) {
+        ElMessage.error(res.message || '请求失败')
+      }
       
       // 401: 未授权，跳转登录
       if (res.code === 401) {
         localStorage.removeItem('token')
-        window.location.href = '/login'
+        if (!silent) {
+          window.location.href = '/login'
+        }
       }
       
       return Promise.reject(new Error(res.message || '请求失败'))
@@ -45,28 +50,29 @@ request.interceptors.response.use(
   },
   error => {
     console.error('响应错误:', error)
+    const silent = error?.config?.silent === true
     
     if (error.response) {
       switch (error.response.status) {
         case 401:
-          ElMessage.error('未授权，请登录')
+          if (!silent) ElMessage.error('未授权，请登录')
           localStorage.removeItem('token')
-          window.location.href = '/login'
+          if (!silent) window.location.href = '/login'
           break
         case 403:
-          ElMessage.error('拒绝访问')
+          if (!silent) ElMessage.error('拒绝访问')
           break
         case 404:
-          ElMessage.error('请求地址不存在')
+          if (!silent) ElMessage.error('请求地址不存在')
           break
         case 500:
-          ElMessage.error('服务器错误')
+          if (!silent) ElMessage.error('服务器错误')
           break
         default:
-          ElMessage.error(error.message || '网络错误')
+          if (!silent) ElMessage.error(error.message || '网络错误')
       }
     } else {
-      ElMessage.error('网络连接失败')
+      if (!silent) ElMessage.error('网络连接失败')
     }
     
     return Promise.reject(error)
